@@ -20,6 +20,8 @@ class SistemaTableSeeder extends Seeder {
       'img_login_nom'       => 'sistema/logo-blanco-1582580735.png',
       'def_img_perf_rut'    => env('PREFIX'),
       'def_img_perf_nom'    => 'sistema/default-perfil-1582134710.png',
+      'def_img_rut'         => env('PREFIX'),
+      'def_img_nom'         => 'sistema/default-imagen-51419854.png',
       'img_cons_rut'        => env('PREFIX'),
       'img_cons_nom'        => 'sistema/en-construccion-1582134710.png',
       'plant_usu_bien'      => 1,

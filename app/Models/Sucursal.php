@@ -19,4 +19,7 @@ class Sucursal extends Model {
   public function etiquetas() {
     return $this->hasMany('App\Models\SucursalEtiqueta');
   }
+  public function actividades() {
+    return $this->morphMany('App\Models\Actividad', 'actividad');
+  }
 }

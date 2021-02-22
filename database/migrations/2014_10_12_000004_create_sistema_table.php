@@ -26,6 +26,8 @@ class CreateSistemaTable extends Migration
         $table->string('img_login_nom', 200)->comment('Nombre de la imagen que se muestra en el login');
         $table->string('def_img_perf_rut', 200)->comment('Ruta de donde se guardó la imagen que se muestra si un usuario no estableció una imagen de perfil');
         $table->string('def_img_perf_nom', 200)->comment('Nombre de la imagen que se muestra si un usuario no estableció una imagen de perfil');
+        $table->string('def_img_rut', 200)->comment('Ruta de donde se guardó la imagen que se muestra si no hay una imagen');
+        $table->string('def_img_nom', 200)->comment('Nombre de la imagen que se muestra  si no hay una imagen');
         $table->string('img_cons_rut', 200)->comment('Ruta de donde se guardó la imagen que se muestra si un módulo está en desarrollo');
         $table->string('img_cons_nom', 200)->comment('Nombre de la imagen que se muestra si un módulo está en desarrollo');
         $table->unsignedBigInteger('plant_usu_bien')->nullable()->comment('Id de la plantilla por default para el módulo Usuarios (Bienvenida)');

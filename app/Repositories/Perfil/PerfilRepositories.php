@@ -19,7 +19,7 @@ class PerfilRepositories implements PerfilInterface {
     switch($request->campo) {
       case 'sucActiva':
         $usuario->id_suc_act = $request->valor;
-        $sucursal = $this->sucursalRepo->getCacheFindOrFail($usuario->id_suc_act);
+        $sucursal = $this->sucursalRepo->getFindOrFailCache($usuario->id_suc_act);
         break;
       case 'lang':
         $usuario->lang = $request->valor;

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Models
 use App\Models\User;
+// Events
+use App\Events\layouts\RegistroUltimoAccesoAlSistema;
 // Repositories
 use App\Repositories\Sistema\SistemaRepositories;
 use App\Repositories\Sucursal\SucursalRepositories;
@@ -25,16 +27,16 @@ class AuthController extends Controller {
       return abort('403', 'Usuario o contraseña incorrectos.');
     }
 
-    return $this->respondWithToken($token, $request->email);
+    return $this->respondWithToken($token, $request->email, 'login');
   }
   public function logout() {
     auth()->logout();
     return response()->json(['message' => 'Successfully logged out']);
   }
   public function refresh() {
-    return $this->respondWithToken(auth()->refresh(), auth()->user()->email);
+    return $this->respondWithToken(auth()->refresh(), auth()->user()->email, 'refresh');
   }
-  protected function respondWithToken($token, $email) {
+  protected function respondWithToken($token, $email, $opcion) {
     $usuario  = User::with(['roles:id,name,nom', 'sucursales'])->where('email', '=', $email)->first();
 
     $resp = $this->data($usuario);
@@ -42,6 +44,9 @@ class AuthController extends Controller {
     $resp['token_type'] = 'bearer';
     $resp['expires_in'] = auth()->factory()->getTTL();
 
+    if($opcion == 'login') {
+      RegistroUltimoAccesoAlSistema::dispatch($usuario);
+    }
     return response()->json($resp);
   }
   protected function getAutenticado() {
@@ -50,7 +55,7 @@ class AuthController extends Controller {
   }
   protected function data($usuario) {
     $sistema  = $this->sistemaRepo->sistemaFindOrFail();
-    $sucursal = $this->sucursalRepo->getCacheFindOrFail($usuario->id_suc_act);
+    $sucursal = $this->sucursalRepo->getFindOrFailCache($usuario->id_suc_act);
     return [
       'desarrollador' => ['developer'=>config('app.developer'), 'developer_url'=>config('app.developer_url'), 'version_del_sistema'=>config('app.version_del_sistema')],
       'sistema'       => $sistema,

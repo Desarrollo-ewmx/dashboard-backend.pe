@@ -12,7 +12,15 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-
+    'alpha_solo_espacios_letras_punto'  => 'The :attribute field can only contain spaces letters and points.',
+    'alpha_solo_puntos_y_letras'        => 'The :attribute field can only contain lowercase letters and periods.',
+    'alpha_solo_numeros'                => 'The :attribute field can only contain numbers.',
+    'alpha_solo_numeros_guiones'        => 'The :attribute field can only contain numbers and middle hyphens.',
+    'alpha_decimal15'                   => 'The :attribute field can only contain numbers and a period with a length no greater than 15 digits.',
+    'alpha_decimal18'                   => 'The :attribute field can only contain numbers and a period with a length no greater than 18 digits.',
+    'alpha_decimal7'                    => 'The :attribute field can only contain numbers and a period with a length no greater than 7 digits.',
+    'alpha_unique_where'                => 'The value of the :attribute field already exists.',
+/* ======================================================= */
     'accepted' => 'The :attribute must be accepted.',
     'active_url' => 'The :attribute is not a valid URL.',
     'after' => 'The :attribute must be a date after :date.',

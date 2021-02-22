@@ -20,6 +20,10 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        /* ===================== [ SISTEMA ] ===================== */
+        \App\Http\Middleware\TransactionalMiddleware::class,
+        \App\Http\Middleware\HeadersSegurosMiddleware::class,
+        \App\Http\Middleware\NavegadorMiddleware::class, // Niega el acceso a los navegadores especificados en este archivo
     ];
 
     /**
@@ -36,11 +40,19 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            /* ===================== [ SISTEMA ] ===================== */
+            \App\Http\Middleware\HeadersSegurosMiddleware::class,
+            \App\Http\Middleware\NavegadorMiddleware::class, // Niega el acceso a los navegadores especificados en este archivo
         ],
 
         'api' => [
-            'throttle:60,1',
+            'throttle:180,1',
             'bindings',
+            /* ===================== [ SISTEMA ] ===================== */
+            \App\Http\Middleware\TransactionalMiddleware::class,
+            \App\Http\Middleware\HeadersSegurosMiddleware::class,
+            \App\Http\Middleware\NavegadorMiddleware::class,
+
         ],
     ];
 
@@ -62,11 +74,17 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'admin' => \App\Http\Middleware\Admin::class,
+        
         /* ===================== [ SISTEMA ] ===================== */
+        'autenticado'           => \App\Http\Middleware\Autenticado::class,
+        'rolAdmin'              => \App\Http\Middleware\RolAdmin::class,
+        'rolCliente'            => \App\Http\Middleware\RolCliente::class,
         'role'                  => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission'            => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission'    => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
+        'idiomaSistema'         => \App\Http\Middleware\IdiomaSistemaMiddleware::class,
+        'primerAcceso'          => \App\Http\Middleware\PrimerAccesoMiddleware::class,
+        'sinAccesoAlSistema'    => \App\Http\Middleware\SinAccesoAlSistemaMiddleware::class,
     ];
 
     /**

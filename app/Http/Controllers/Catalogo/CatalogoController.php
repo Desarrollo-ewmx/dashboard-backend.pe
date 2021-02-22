@@ -12,6 +12,15 @@ class CatalogoController extends Controller {
   public function __construct(CatalogoRepositories $catalogoRepositories) {
     $this->catalogoRepo = $catalogoRepositories;
   }
+  public function index(Request $request) {
+    $sorter         = $request->input('sorter');
+    $tableFilter    = $request->input('tableFilter');
+    $columnFilter   = $request->input('columnFilter');
+    $itemsLimit     = $request->input('itemsLimit');
+    $catalogos = $this->catalogoRepo->index($sorter, $tableFilter, $columnFilter, $itemsLimit);
+
+    return response()->json($catalogos,200);
+  }
   public function store(StoreCatalogoRequest $request) {
     $catalogo = $this->catalogoRepo->store($request);
     return response()->json(['id'=>$catalogo->id], 200);
