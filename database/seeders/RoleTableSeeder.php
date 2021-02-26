@@ -18,7 +18,6 @@ class RoleTableSeeder extends Seeder {
       'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
     ]);
-    $rolPruebas->syncPermissions([1,2,3,4,5]);
     Role::create([
       'nom'				      => 'Cliente',
       'name'            => 'cliente',

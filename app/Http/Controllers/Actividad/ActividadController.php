@@ -12,12 +12,14 @@ class ActividadController extends Controller {
     $this->actividadRepo = $actividadRepositories;
   }
   public function index(Request $request) {
-    $sorter       = $request->input('sorter');
-    $tableFilter  = $request->input('tableFilter');
-    $columnFilter = $request->input('columnFilter');
-    $itemsLimit   = $request->input('itemsLimit');
-    $id_modelo    = $request->input('id_modelo');
-    $actividades = $this->actividadRepo->getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $id_modelo);
+    $sorter       = $request->sorter;
+    $tableFilter  = $request->tableFilter;
+    $columnFilter = $request->columnFilter;
+    $itemsLimit   = $request->itemsLimit;
+    $id_modelo    = $request->id_modelo;
+    $startDate    = $request->startDate;
+    $endDate      = $request->endDate;
+    $actividades  = $this->actividadRepo->getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $id_modelo, $startDate, $endDate);
 
     return response()->json($actividades,200);
   }

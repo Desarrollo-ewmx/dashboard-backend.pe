@@ -10,6 +10,51 @@ class PermisoTableSeeder extends Seeder {
    * @return void
    */
   public function run() {
+// PERMISOS DEL MÓDULO ACTIVIDADES
+    Permission::create([
+      //    'id'              => 25,
+      'nom'             => "Ver detalles 'Actividades'",
+      'name'				    => 'actividad.show',
+      'desc'            => "Ver solo los detalles de los registros a los que se le tiene acceso",
+      'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+    ]);
+    Permission::create([
+  //    'id'              => 25,
+      'nom'             => "Ver detalles 'Actividades'",
+      'name'				    => 'actividad.fullShow',
+      'desc'            => "Ver detalles de cualquier registro del módulo 'Actividades'",
+      'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+    ]);
+// PERMISOS DEL MÓDULO SUCURSALES
+      Permission::create([
+    //    'id'              => 24,
+        'nom'             => "Registrar nuevo 'Sucursales'",
+        'name'				    => 'sucursal.create',
+        'desc'            => "Crear nuevo registro en el módulo 'Sucursales'",
+        'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+      ]);
+      Permission::create([
+    //    'id'              => 25,
+        'nom'             => "Ver detalles 'Sucursales'",
+        'name'				    => 'sucursal.show',
+        'desc'            => "Ver detalles de cualquier registro del módulo 'Sucursales'",
+        'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+      ]);
+      Permission::create([
+    //    'id'              => 26,
+        'nom'             => "Editar registro 'Sucursales'",
+        'name'				    => "sucursal.edit",
+        'desc'            => "Editar cualquier dato de un registro del módulo 'Sucursales'",
+        'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+      ]);
+      Permission::create([
+    //    'id'              => 27,
+        'nom'             => "Eliminar registro 'Sucursales'",
+        'name'				    => "sucursal.destroy",
+        'desc'            => "Eliminar cualquier registro del módulo 'Sucursales'",
+        'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
+      ]);
+    /*
     // PERMISOS DEL MÓDULO USUARIOS
     Permission::create([
   //    'id'              => 23,
@@ -82,5 +127,6 @@ class PermisoTableSeeder extends Seeder {
       'desc'            => "Eliminar cualquier registro del módulo 'Clientes'",
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
+    */
   }
 }

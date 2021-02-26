@@ -16,6 +16,10 @@ class Sucursal extends Model {
 
   protected $dates = ['deleted_at'];
 //  protected $softCascade = []; // SE INDICAN LOS NOMBRES DE LAS RELACIONES CON LA QUE TENDRA BORRADO EN CASCADA
+
+  public function usuarios() {
+    return $this->belongsToMany('App\Models\User', 'user_sucursal');
+  }
   public function etiquetas() {
     return $this->hasMany('App\Models\SucursalEtiqueta');
   }

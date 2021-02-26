@@ -7,21 +7,20 @@ use App\Http\Requests\Sucursal\StoreSucursalRequest;
 use App\Http\Requests\Sucursal\UpdateSucursalRequest;
 // Repositories
 use App\Repositories\Sucursal\SucursalRepositories;
-use App\Repositories\Actividad\ActividadRepositories;
 
 class SucursalController extends Controller {
   protected $sucursalRepo;
-  protected $actividadRepo;
-  public function __construct(SucursalRepositories $sucursalRepositories, ActividadRepositories $actividadRepositories) {
-    $this->sucursalRepo    = $sucursalRepositories;
-    $this->actividadRepo    = $actividadRepositories;
+  public function __construct(SucursalRepositories $sucursalRepositories) {
+    $this->sucursalRepo = $sucursalRepositories;
   }
   public function index(Request $request) {
-    $sorter         = $request->input('sorter');
-    $tableFilter    = $request->input('tableFilter');
-    $columnFilter   = $request->input('columnFilter');
-    $itemsLimit     = $request->input('itemsLimit');
-    $sucursales = $this->sucursalRepo->getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit);
+    $sorter       = $request->sorter;
+    $tableFilter  = $request->tableFilter;
+    $columnFilter = $request->columnFilter;
+    $itemsLimit   = $request->itemsLimit;
+    $startDate    = $request->startDate;
+    $endDate      = $request->endDate;
+    $sucursales   = $this->sucursalRepo->getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $startDate, $endDate);
 
     return response()->json($sucursales,200);
   }
@@ -29,14 +28,13 @@ class SucursalController extends Controller {
     $sucursal = $this->sucursalRepo->store($request);
     return response()->json(['id'=>$sucursal->id],200);
   }
-  public function show($id_sucursal) {
+  public function get($id_sucursal) {
     $sucursal = $this->sucursalRepo->getFindOrFailCache($id_sucursal);
     return response()->json($sucursal,200);
   }
   public function update(UpdateSucursalRequest $request, $id_sucursal) {
     $sucursal = $this->sucursalRepo->update($request, $id_sucursal);
-    return response()->json($sucursal,200);
-  //  return response()->json(['id'=>$sucursal->id],200);
+    return response()->json(['id'=>$sucursal->id],200);
   }
   public function destroy($id_sucursal) {
     $this->sucursalRepo->destroy($id_sucursal);

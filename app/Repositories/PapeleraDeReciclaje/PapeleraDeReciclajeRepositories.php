@@ -3,14 +3,14 @@ namespace App\Repositories\PapeleraDeReciclaje;
 // Models
 use App\Models\PapeleraDeReciclaje;
 // Repositories
-use App\Repositories\papeleraDeReciclaje\tabla\usuarios\UsuariosRepositories;
+use App\Repositories\papeleraDeReciclaje\tabla\Sucursal\SucursalPapeleraRepositories;
 //Otro
 use DB;
 
 class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
-  protected $usuariosRepo;
-  public function __construct(UsuariosRepositories $usuariosRepositories) {
-    $this->usuariosRepo                   = $usuariosRepositories;
+  protected $sucursalRepo;
+  public function __construct(SucursalPapeleraRepositories $sucursalRepositories) {
+    $this->sucursalRepo                   = $sucursalRepositories;
   }
   public function papeleraAsignadoFindOrFailById($id_registro) {
     $id_registro = $this->serviceCrypt->decrypt($id_registro);
@@ -20,14 +20,15 @@ class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
   public function getPagination($request) {
     return PapeleraDeReciclaje::asignado(auth()->user()->registros_tab_acces, auth()->user()->email_registro)->buscar($request->opcion_buscador, $request->buscador)->orderBy('id', 'DESC')->paginate($request->paginador);
   }
-  public function store($array) {
+  public function store($info) {
     $papelera = new PapeleraDeReciclaje();
-    $papelera->mod            = $array['modulo'];
-    $papelera->reg            = $array['registro'];
-    $papelera->tab            = $array['tab'];
-    $papelera->id_reg         = $array['id_reg'];
-    $papelera->id_fk          = $array['id_fk'];
-    $papelera->deleted_at_reg = auth()->user()->email_registro;
+    $papelera->user_id        = auth()->user()->id;
+    $papelera->papelera_id    = $info->id_reg;
+    $papelera->papelera_type  = $info->modelo;
+    $papelera->mod            = $info->modulo;
+    $papelera->reg            = $info->registro;
+    $papelera->tab            = $info->tabla;
+    $papelera->id_fk          = $info->id_fk;
     $papelera->save();
     return $papelera;
   }

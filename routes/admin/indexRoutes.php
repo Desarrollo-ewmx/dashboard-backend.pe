@@ -5,6 +5,7 @@ require_once __DIR__ . '/sucursal/sucursalRoutes.php';
 require_once __DIR__ . '/catalogo/catalogoRoutes.php';
 require_once __DIR__ . '/actividad/actividadRoutes.php';
 require_once __DIR__ . '/imagen/imagenRoutes.php';
+require_once __DIR__ . '/rol/rolRoutes.php';
 
 Route::group(['prefix' => 'perfil'], function() {
   require_once __DIR__ . '/perfil/perfilRoutes.php';
@@ -14,10 +15,8 @@ Route::group(['prefix' => 'usuario'], function() {
   require_once __DIR__ . '/usuario/usuarioRoutes.php';
 });
 
-Route::resource('roles',               'RolesController');
-Route::get('/roles/move/move-up',      'RolesController@moveUp')->name('roles.up');
-Route::get('/roles/move/move-down',    'RolesController@moveDown')->name('roles.down');
 Route::resource('users', 'UsersController')->except( ['create', 'store'] );
+
 /*
   Route::resource('mail',        'MailController');
   Route::get('prepareSend/{id}', 'MailController@prepareSend')->name('prepareSend');

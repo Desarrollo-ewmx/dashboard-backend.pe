@@ -13,7 +13,7 @@ class Autenticado {
   public function handle($request, Closure $next) {
     // Verifica si el usuario aun esta logueado
     if(empty(auth()->user())) {
-      return response()->json(['message' => 'Su sesión a terminado'], 401);
+      return response()->json(['response'=>['status'=> 401,'data'=>['message'=>'Su sesión a terminado']],'message' => 'Su sesión a terminado'], 401);
     }
     return $next($request);
   }

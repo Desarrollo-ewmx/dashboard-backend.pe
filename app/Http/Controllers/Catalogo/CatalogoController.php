@@ -23,7 +23,7 @@ class CatalogoController extends Controller {
   }
   public function store(StoreCatalogoRequest $request) {
     $catalogo = $this->catalogoRepo->store($request);
-    return response()->json(['id'=>$catalogo->id], 200);
+    return response()->json($catalogo, 200);
   }
   public function getAllCache(Request $request) {
     $catalogos = $this->catalogoRepo->getAllCache($request->input);

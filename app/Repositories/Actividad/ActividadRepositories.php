@@ -6,8 +6,10 @@ use App\Models\Actividad;
 use Illuminate\Support\Facades\DB;
 
 class ActividadRepositories implements ActividadInterface {
-  public function getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $id_modelo) {
+  public function getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $id_modelo, $startDate, $endDate) {
     $db = DB::table('actividades')
+    ->whereNull('actividades.deleted_at')
+    ->whereBetween('actividades.created_at', [$startDate, $endDate])
     ->join('users', 'users.id', '=', 'actividades.user_id')
     ->select('actividades.*', 'users.name', 'users.email_registro');
   
@@ -18,6 +20,9 @@ class ActividadRepositories implements ActividadInterface {
     if( isset($columnFilter['id']) ){
       $db->where('actividades.id', 'like', '%' . $columnFilter['id'] . '%');
     }
+    if( isset($columnFilter['email_registro']) ){
+      $db->where('users.email_registro', 'like', '%' . $columnFilter['email_registro'] . '%');
+    }
     if( isset($columnFilter['mod']) ){
       $db->where('actividades.mod', 'like', '%' . $columnFilter['mod'] . '%');
     }
@@ -27,25 +32,26 @@ class ActividadRepositories implements ActividadInterface {
     if( isset($columnFilter['inpu']) ){
       $db->where('actividades.inpu', 'like', '%' . $columnFilter['inpu'] . '%');
     }
-    if( isset($columnFilter['email_registro']) ){
-      $db->where('users.email_registro', 'like', '%' . $columnFilter['email_registro'] . '%');
-    }
     if( isset($columnFilter['ant']) ){
       $db->where('actividades.ant', 'like', '%' . $columnFilter['ant'] . '%');
     }
     if( isset($columnFilter['nuev']) ){
       $db->where('actividades.nuev', 'like', '%' . $columnFilter['nuev'] . '%');
     }
-  
+    if( isset($columnFilter['created_at']) ){
+      $db->where('actividades.created_at', 'like', '%' . $columnFilter['created_at'] . '%');
+    }
+
     if( strlen($tableFilter) > 0 ){
       $db->where(function ($query) use ($tableFilter) {
         $query->where('actividades.id', 'like', '%'.$tableFilter.'%')
+            ->orWhere('users.email_registro', 'like', '%'.$tableFilter.'%')
             ->orWhere('actividades.mod', 'like', '%'.$tableFilter.'%')
             ->orWhere('actividades.actividad_id', 'like', '%'.$tableFilter.'%')
             ->orWhere('actividades.inpu', 'like', '%'.$tableFilter.'%')
-            ->orWhere('users.email_registro', 'like', '%'.$tableFilter.'%')
             ->orWhere('actividades.ant', 'like', '%'.$tableFilter.'%')
-            ->orWhere('actividades.nuev', 'like', '%'.$tableFilter.'%');
+            ->orWhere('actividades.nuev', 'like', '%'.$tableFilter.'%')
+            ->orWhere('actividades.created_at', 'like', '%'.$tableFilter.'%');
       });
     }
 
@@ -56,26 +62,29 @@ class ActividadRepositories implements ActividadInterface {
         $sortCase = 'asc';
       }
       switch($sorter['column']){
-        case 'actividades.id':
-          $db->orderBy('id', $sortCase);
-        break;
-        case 'actividades.mod':
-          $db->orderBy('mod', $sortCase);
-        break;
-        case 'actividades.actividad_id':
-          $db->orderBy('actividad_id', $sortCase);
-        break;
-        case 'actividades.inpu':
-          $db->orderBy('inpu', $sortCase);
+        case 'id':
+          $db->orderBy('actividades.id', $sortCase);
         break;
         case 'email_registro':
           $db->orderBy('users.email_registro', $sortCase);
         break;
-        case 'actividades.ant':
-          $db->orderBy('ant', $sortCase);
+        case 'mod':
+          $db->orderBy('actividades.mod', $sortCase);
         break;
-        case 'actividades.nuev':
-          $db->orderBy('nuev', $sortCase);
+        case 'actividad_id':
+          $db->orderBy('actividades.actividad_id', $sortCase);
+        break;
+        case 'inpu':
+          $db->orderBy('actividades.inpu', $sortCase);
+        break;
+        case 'ant':
+          $db->orderBy('actividades.ant', $sortCase);
+        break;
+        case 'nuev':
+          $db->orderBy('actividades.nuev', $sortCase);
+        break;
+        case 'created_at':
+          $db->orderBy('actividades.created_at', $sortCase);
         break;
         default:
           $db->orderBy('actividades.id', 'desc');

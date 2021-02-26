@@ -12,9 +12,8 @@ class RegistrarActividad {
    *
    * @return void
    */
-  public function __construct()
-  {
-      //
+  public function __construct() {
+    //
   }
 
   /**
@@ -25,34 +24,19 @@ class RegistrarActividad {
    */
   public function handle(ActividadRegistrada $event) {
     // Función que me guarda el registro de la actividad que hizo el usuario (Campos modificados)
+    // Importante: En esta funcion se guardan los cambios para los campos anterior y nuevo dependiendo lo que mande en controlador
     $event = $event->info;
-    $camposBD = ['user_id', 'actividad_id', 'actividad_type', 'mod', 'rut', 'perm', 'inpu', 'ant', 'nuev'];
-    $hastaC = count($event->campos);
-    $datos = null;
-    $contador3 = 0;
-    
-    for($contador2=0;$contador2<$hastaC;$contador2++) {
-      if($event->request->isDirty($event->campos[$contador2])) {
-        $datos[$contador2][$camposBD[$contador3]] =  auth()->user()->id;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->request->id;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->modelo;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->modulo;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->ruta;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->permisos;
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->campos[$contador2][1];
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->request->getOriginal($event->campos[$contador2][0]);
-        $contador3 ++;
-        $datos[$contador2][$camposBD[$contador3]] =  $event->request->getAttribute($event->campos[$contador2][0]);
-        $contador3 = 0;
-      }
-    }
-    Actividad::insert($datos);
+
+    $actividad                  = new Actividad();
+    $actividad->user_id         = auth()->user()->id;
+    $actividad->actividad_id    = $event->id;
+    $actividad->actividad_type  = $event->modelo;
+    $actividad->mod             = $event->modulo;
+    $actividad->rut             = $event->ruta;
+    $actividad->perm            = $event->permisos;
+    $actividad->inpu            = $event->campo;
+    $actividad->ant             = $event->valores[0];
+    $actividad->nuev            = $event->valores[1];
+    $actividad->save();
   }
 }

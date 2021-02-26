@@ -16,13 +16,16 @@ class CreatePapeleraDeReciclajeTable extends Migration {
       $table->charset = 'utf8mb4';
       $table->collation = 'utf8mb4_unicode_ci';
       $table->bigIncrements('id');
+      $table->unsignedBigInteger('user_id')->comment('Llave foranea');
+      $table->foreign('user_id')->references('id')->on('users')->onUpdate('restrict')->onDelete('cascade');
+      $table->integer('papelera_id')->unsigned()->comment('ID del modelo');
+      $table->string('papelera_type')->comment('Ruta del modelo');
       $table->string('mod', 50)->comment('Nombre del módulo en el que se elimino el registro');
       $table->string('reg', 200)->comment('Información a mostrar en la papelera');
       $table->string('tab', 50)->comment('Nombre de la tabla en la BD');
-      $table->string('id_reg', 20)->comment('ID de registro eliminado');
       $table->string('id_fk', 20)->nullable()->comment('ID de la llave foranea con la que tiene relación');
-      $table->string('deleted_at_reg', 75)->comment('Correo del usuario que realizo el registro');
-      $table->timestamps();
+      $table->timestamp('created_at')->useCurrent();
+      $table->timestamp('updated_at')->useCurrent();
     });
   }
 

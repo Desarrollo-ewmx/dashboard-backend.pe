@@ -1,36 +1,37 @@
 <?php
-namespace App\Repositories\Sucursal;
+namespace App\Repositories\Rol;
 // Models
-use App\Models\Sucursal;
+use Spatie\Permission\Models\Role;
 // Events
 use App\Events\layouts\ActividadesRegistradas;
 use App\Events\layouts\ActividadRegistrada;
 // Repositories
 use App\Repositories\PapeleraDeReciclaje\PapeleraDeReciclajeRepositories;
 // Otros
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class SucursalRepositories implements SucursalInterface {
+class RolRepositories implements RolInterface {
   protected $papeleraRepo;
   public function __construct(PapeleraDeReciclajeRepositories $papeleraDeReciclajeRepositories) {
     $this->papeleraRepo = $papeleraDeReciclajeRepositories;
   } 
   public function getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $startDate, $endDate) {
-    $db = DB::table('sucursales')
+    $db = DB::table('roles')
     ->whereNull('deleted_at')
-    ->where('id', '!=', 1)
+    ->where('name', '!=', config('app.rol_desarrollador'))
+    ->where('name', '!=', config('app.rol_sin_acceso_al_sistema'))
+    ->where('name', '!=', config('app.rol_cliente'))
     ->whereBetween('created_at', [$startDate, $endDate])
-    ->select('id', 'suc', 'ser_cot', 'created_at');
+    ->select('id', 'nom', 'desc', 'created_at');
 
     if(isset($columnFilter['id'])) {
       $db->where('id', 'like', '%'.$columnFilter['id'].'%');
     }
-    if(isset($columnFilter['suc'])) {
-      $db->where('suc', 'like', '%'.$columnFilter['suc'].'%');
+    if(isset($columnFilter['nom'])) {
+      $db->where('nom', 'like', '%'.$columnFilter['nom'].'%');
     }
-    if(isset($columnFilter['ser_cot'])) {
-      $db->where('ser_cot', 'like', '%'.$columnFilter['ser_cot'].'%');
+    if(isset($columnFilter['desc'])) {
+      $db->where('desc', 'like', '%'.$columnFilter['desc'].'%');
     }
     if(isset($columnFilter['created_at'])) {
       $db->where('created_at', 'like', '%'.$columnFilter['created_at'].'%');
@@ -39,8 +40,8 @@ class SucursalRepositories implements SucursalInterface {
     if(strlen($tableFilter) > 0) {
       $db->where(function ($query) use ($tableFilter) {
         $query->where('id', 'like', '%'.$tableFilter.'%')
-            ->orWhere('suc', 'like', '%'.$tableFilter.'%')
-            ->orWhere('ser_cot', 'like', '%'.$tableFilter.'%')
+            ->orWhere('nom', 'like', '%'.$tableFilter.'%')
+            ->orWhere('desc', 'like', '%'.$tableFilter.'%')
             ->orWhere('created_at', 'like', '%'.$tableFilter.'%');
       });
     }
@@ -55,11 +56,11 @@ class SucursalRepositories implements SucursalInterface {
         case 'id':
           $db->orderBy('id', $sortCase);
         break;
-        case 'suc':
-          $db->orderBy('suc', $sortCase);
+        case 'nom':
+          $db->orderBy('nom', $sortCase);
         break;
-        case 'ser_cot':
-          $db->orderBy('ser_cot', $sortCase);
+        case 'desc':
+          $db->orderBy('desc', $sortCase);
         break;
         case 'created_at':
           $db->orderBy('created_at', $sortCase);
@@ -73,6 +74,7 @@ class SucursalRepositories implements SucursalInterface {
     return $db->paginate($itemsLimit);
   }
   public function store($request) {
+      /*
     $sucursal                 = new Sucursal();
     $sucursal->suc            = $request->suc;
     $sucursal->direc          = $request->direc;
@@ -81,8 +83,10 @@ class SucursalRepositories implements SucursalInterface {
     $sucursal->save();
 
     return $sucursal;
+    */
   }
-  public function update($request, $id_sucursal) {
+  public function update($request, $id_rol) {
+      /*
     $sucursal           = $this->getFindOrFailCache($id_sucursal);
     $sucursal->suc      = $request->suc;
     $sucursal->direc    = $request->direc;
@@ -104,8 +108,10 @@ class SucursalRepositories implements SucursalInterface {
     $this->eliminarCache($id_sucursal);
 
     return $sucursal;
+    */
   }
-  public function destroy($id_sucursal) {
+  public function destroy($id_rol) {
+      /*
     $sucursal = $this->getFindOrFail($id_sucursal, ['usuarios:id,name,apell,email_registro']);
 
     $suc_usu = count($sucursal->usuarios);
@@ -132,17 +138,9 @@ class SucursalRepositories implements SucursalInterface {
     $this->papeleraRepo->store($info);
 
     return $sucursal;
+    */
   }
-  public function getFindOrFail($id_sucursal, $relaciones) {
-    return Sucursal::with($relaciones)->findOrFail($id_sucursal);
-  }
-  public function getFindOrFailCache($id_sucursal) {
-    $sucursal = Cache::rememberForever('sucursal-'.$id_sucursal, function() use($id_sucursal){
-      return Sucursal::with(['etiquetas'])->findOrFail($id_sucursal);
-    });
-    return $sucursal;
-  }
-  public function eliminarCache($id_sucursal) {
-    Cache::pull('sucursal-'.$id_sucursal);
+  public function getFindOrFail($id_rol, $relaciones) {
+    return Role::with($relaciones)->findOrFail($id_rol);
   }
 }
