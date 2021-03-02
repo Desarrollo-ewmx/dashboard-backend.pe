@@ -2,14 +2,8 @@
 namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
-use App\Models\RoleHierarchy;
 
 class RoleTableSeeder extends Seeder {
-  /**
-   * Run the database seeds.
-   *
-   * @return void
-   */
   public function run() {
     $rolPruebas = Role::create([
       'nom'				      => 'Pruebas',
@@ -48,11 +42,6 @@ class RoleTableSeeder extends Seeder {
       'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
-    RoleHierarchy::create([
-      'role_id' => $adminRole->id,
-      'hierarchy' => 1,
-    ]);
-    
     $userRole = Role::create([
       'nom'				      => 'Usuario',
       'name'            => 'user',
@@ -60,21 +49,12 @@ class RoleTableSeeder extends Seeder {
       'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
-    RoleHierarchy::create([
-      'role_id' => $userRole->id,
-      'hierarchy' => 2,
-    ]);
-    
     $guestRole = Role::create([
       'nom'				      => 'Guest',
       'name'            => 'guest',
       'desc'            => '',
       'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
-    ]);
-    RoleHierarchy::create([
-      'role_id' => $guestRole->id,
-      'hierarchy' => 3,
     ]);
   }
 }

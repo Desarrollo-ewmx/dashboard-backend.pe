@@ -74,23 +74,23 @@ class RolRepositories implements RolInterface {
     return $db->paginate($itemsLimit);
   }
   public function store($request) {
-      /*
-    $sucursal                 = new Sucursal();
-    $sucursal->suc            = $request->suc;
-    $sucursal->direc          = $request->direc;
-    $sucursal->ser_cot        = $request->ser_cot;
-    $sucursal->created_at_reg = auth()->user()->email_registro;
-    $sucursal->save();
+    $rol                  = new Role();
+    $rol->nom             = $request->nom;
+    $rol->name            = $request->slug;
+    $rol->desc            = $request->desc;
+    $rol->asig_reg        = auth()->user()->email_registro;
+    $rol->created_at_reg  = auth()->user()->email_registro;
+    $rol->save();
+    $rol->givePermissionTo($request->permis);
 
-    return $sucursal;
-    */
+    return $rol;
   }
   public function update($request, $id_rol) {
       /*
     $sucursal           = $this->getFindOrFailCache($id_sucursal);
     $sucursal->suc      = $request->suc;
     $sucursal->direc    = $request->direc;
-    $sucursal->ser_cot  = $request->ser_cot;
+    $sucursal->s  = $request->s;
    
     if($sucursal->isDirty()) {
       $info = (object) [
@@ -98,7 +98,7 @@ class RolRepositories implements RolInterface {
         'campos'  => [
                         ['suc', 'Sucursal'],
                         ['direc', 'Dirección'],
-                        ['ser_cot', 'Serie']
+                        ['s', 'Serie']
                       ]];
       // Dispara el evento registrado en App\Providers\EventServiceProvider.php
       ActividadesRegistradas::dispatch($info); 

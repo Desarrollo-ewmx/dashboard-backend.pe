@@ -3,13 +3,13 @@ namespace App\Http\Controllers\Rol;
 use App\Http\Controllers\Controller;
 // Request
 use Illuminate\Http\Request;
+use App\Http\Requests\Rol\StoreRolRequest;
 // Repositories
 use App\Repositories\Rol\RolRepositories;
 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\DB;
 use App\Models\Menurole;
-use App\Models\RoleHierarchy;
 
 class RolController extends Controller {
   protected $rolRepo;
@@ -26,47 +26,12 @@ class RolController extends Controller {
     $roles        = $this->rolRepo->getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $startDate, $endDate);
 
     return response()->json($roles,200);
-
-    /*
-    $roles = DB::table('roles')
-    ->leftJoin('role_hierarchy', 'roles.id', '=', 'role_hierarchy.role_id')
-    ->select('roles.*', 'role_hierarchy.hierarchy')
-    ->orderBy('hierarchy', 'asc')
-    ->get();
-    return response()->json( $roles );
-    */
-  }
-/*
-  public function moveUp(Request $request){
+  } 
+  public function store(StoreRolRequest $request) {
+    $rol = $this->rolRepo->store($request);
+    return response()->json(['id'=>$rol->id],200);
     
-    $element = RoleHierarchy::where('role_id', '=', $request->input('id'))->first();
-    $switchElement = RoleHierarchy::where('hierarchy', '<', $element->hierarchy)
-        ->orderBy('hierarchy', 'desc')->first();
-    if(!empty($switchElement)){
-        $temp = $element->hierarchy;
-        $element->hierarchy = $switchElement->hierarchy;
-        $switchElement->hierarchy = $temp;
-        $element->save();
-        $switchElement->save();
-    }
-    return response()->json( ['status' => 'success'] );
-  }
 
-  public function moveDown(Request $request){
-    $element = RoleHierarchy::where('role_id', '=', $request->input('id'))->first();
-    $switchElement = RoleHierarchy::where('hierarchy', '>', $element->hierarchy)
-        ->orderBy('hierarchy', 'asc')->first();
-    if(!empty($switchElement)){
-        $temp = $element->hierarchy;
-        $element->hierarchy = $switchElement->hierarchy;
-        $switchElement->hierarchy = $temp;
-        $element->save();
-        $switchElement->save();
-    }
-    return response()->json( ['status' => 'success'] );
-  }
-  */
-  public function store(Request $request) {
     /*
     $request->validate([
         'name' => 'required|min:1|max:128'
@@ -132,5 +97,35 @@ class RolController extends Controller {
         return response()->json( ['status' => 'success'] );
     }
     */
+    /*
+  public function moveUp(Request $request){
+    
+    $element = RoleHierarchy::where('role_id', '=', $request->input('id'))->first();
+    $switchElement = RoleHierarchy::where('hierarchy', '<', $element->hierarchy)
+        ->orderBy('hierarchy', 'desc')->first();
+    if(!empty($switchElement)){
+        $temp = $element->hierarchy;
+        $element->hierarchy = $switchElement->hierarchy;
+        $switchElement->hierarchy = $temp;
+        $element->save();
+        $switchElement->save();
+    }
+    return response()->json( ['status' => 'success'] );
+  }
+
+  public function moveDown(Request $request){
+    $element = RoleHierarchy::where('role_id', '=', $request->input('id'))->first();
+    $switchElement = RoleHierarchy::where('hierarchy', '>', $element->hierarchy)
+        ->orderBy('hierarchy', 'asc')->first();
+    if(!empty($switchElement)){
+        $temp = $element->hierarchy;
+        $element->hierarchy = $switchElement->hierarchy;
+        $switchElement->hierarchy = $temp;
+        $element->save();
+        $switchElement->save();
+    }
+    return response()->json( ['status' => 'success'] );
+  }
+  */
   }
 }

@@ -13,7 +13,7 @@ class PermisoTableSeeder extends Seeder {
 // PERMISOS DEL MÓDULO ACTIVIDADES
     Permission::create([
       //    'id'              => 25,
-      'nom'             => "Ver detalles 'Actividades'",
+      'nom'             => "Ver detalles por registro 'Actividades'",
       'name'				    => 'actividad.show',
       'desc'            => "Ver solo los detalles de los registros a los que se le tiene acceso",
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',

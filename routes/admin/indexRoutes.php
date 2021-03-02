@@ -6,6 +6,7 @@ require_once __DIR__ . '/catalogo/catalogoRoutes.php';
 require_once __DIR__ . '/actividad/actividadRoutes.php';
 require_once __DIR__ . '/imagen/imagenRoutes.php';
 require_once __DIR__ . '/rol/rolRoutes.php';
+require_once __DIR__ . '/permiso/permisoRoutes.php';
 
 Route::group(['prefix' => 'perfil'], function() {
   require_once __DIR__ . '/perfil/perfilRoutes.php';

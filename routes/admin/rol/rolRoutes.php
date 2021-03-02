@@ -11,5 +11,3 @@ Route::group(['prefix' => 'rol'], function() {
   //Route::get('move/move-up',      [RolController::class, 'moveUp'])->name('roles.up');
   //Route::get('move/move-down',    [RolController::class, 'moveDown'])->name('roles.down');
 });
-
-

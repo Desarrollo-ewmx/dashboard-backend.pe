@@ -8,16 +8,16 @@ class StoreSucursalRequest extends FormRequest {
   }
   public function rules() {
     return [
-      'suc'     => 'required|max:50|unique:sucursales,suc',
-      'direc'   => 'required|max:200|string',
-      'ser_cot' => 'required|max:150|exists:catalogos,value',
+      'suc'       => 'required|max:50|unique:sucursales,suc',
+      'direc'     => 'required|max:200|string',
+      'ser_cotiz' => 'required|max:150|exists:catalogos,value',
     ];
   }
   public function attributes() {
     return [
-      'suc'     => 'sucursal',
-      'direc'   => 'dirección',
-      'ser_cot' => 'serie'
+      'suc'       => 'sucursal',
+      'direc'     => 'dirección',
+      'ser_cotiz' => 'serie'
     ];
   }
 }

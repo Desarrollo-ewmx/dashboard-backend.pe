@@ -76,7 +76,7 @@ class SucursalRepositories implements SucursalInterface {
     $sucursal                 = new Sucursal();
     $sucursal->suc            = $request->suc;
     $sucursal->direc          = $request->direc;
-    $sucursal->ser_cot        = $request->ser_cot;
+    $sucursal->ser_cot        = $request->ser_cotiz;
     $sucursal->created_at_reg = auth()->user()->email_registro;
     $sucursal->save();
 
@@ -86,7 +86,7 @@ class SucursalRepositories implements SucursalInterface {
     $sucursal           = $this->getFindOrFailCache($id_sucursal);
     $sucursal->suc      = $request->suc;
     $sucursal->direc    = $request->direc;
-    $sucursal->ser_cot  = $request->ser_cot;
+    $sucursal->ser_cot  = $request->ser_cotiz;
    
     if($sucursal->isDirty()) {
       $info = (object) [
