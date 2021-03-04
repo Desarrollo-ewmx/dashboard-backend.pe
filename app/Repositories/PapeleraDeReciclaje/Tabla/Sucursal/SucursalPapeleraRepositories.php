@@ -11,8 +11,6 @@ class SucursalPapeleraRepositories implements SucursalPapeleraInterface {
   }
   public function metDestroy($consulta) {
     // Dispara el evento registrado en App\Providers\EventServiceProvider.php
-    ArchivosEliminados::dispatch(
-      array($consulta->log_nom), 
-    );
+    ArchivosEliminados::dispatch([$consulta->log_nom]);
   }
 }

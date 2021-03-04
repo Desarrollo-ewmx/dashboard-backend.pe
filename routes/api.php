@@ -3,7 +3,7 @@ Route::group(['middleware' => 'api'], function ($router) {
   require_once __DIR__ . '/public/indexRoutes.php';
 
   Route::group(['middleware' => ['autenticado', 'sinAccesoAlSistema', 'idiomaSistema', 'primerAcceso']], function ($router) {
-    Route::group(['middleware' => ['rolCliente']], function ($router) {
+    Route::group(['middleware' => ['rolCliente'], 'prefix' => 'rc'], function ($router) {
       require_once __DIR__ . '/client/indexRoutes.php';
     });
 

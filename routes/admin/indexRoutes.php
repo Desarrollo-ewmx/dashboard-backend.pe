@@ -7,6 +7,8 @@ require_once __DIR__ . '/actividad/actividadRoutes.php';
 require_once __DIR__ . '/imagen/imagenRoutes.php';
 require_once __DIR__ . '/rol/rolRoutes.php';
 require_once __DIR__ . '/permiso/permisoRoutes.php';
+require_once __DIR__ . '/papeleraDeReciclaje/papeleraDeReciclajeRoutes.php';
+require_once __DIR__ . '/quejaYSugerencia/quejaYSugerenciaRoutes.php';
 
 Route::group(['prefix' => 'perfil'], function() {
   require_once __DIR__ . '/perfil/perfilRoutes.php';

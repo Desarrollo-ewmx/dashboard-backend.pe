@@ -46,13 +46,13 @@ class RolRepositories implements RolInterface {
       });
     }
 
-    if(!empty($sorter)){
+    if(!empty($sorter)) {
       if($sorter['asc'] === false){
         $sortCase = 'desc';
       }else{
         $sortCase = 'asc';
       }
-      switch($sorter['column']){
+      switch($sorter['column']) {
         case 'id':
           $db->orderBy('id', $sortCase);
         break;
@@ -76,9 +76,8 @@ class RolRepositories implements RolInterface {
   public function store($request) {
     $rol                  = new Role();
     $rol->nom             = $request->nom;
-    $rol->name            = $request->slug;
+    $rol->name            = $request->name;
     $rol->desc            = $request->desc;
-    $rol->asig_reg        = auth()->user()->email_registro;
     $rol->created_at_reg  = auth()->user()->email_registro;
     $rol->save();
     $rol->givePermissionTo($request->permis);
@@ -86,61 +85,58 @@ class RolRepositories implements RolInterface {
     return $rol;
   }
   public function update($request, $id_rol) {
-      /*
-    $sucursal           = $this->getFindOrFailCache($id_sucursal);
-    $sucursal->suc      = $request->suc;
-    $sucursal->direc    = $request->direc;
-    $sucursal->s  = $request->s;
+    $rol        = $this->getFindOrFail($id_rol, []);
+    $rol->nom   = $request->nom;
+    $rol->desc  = $request->desc;
    
-    if($sucursal->isDirty()) {
+    if($rol->isDirty()) {
       $info = (object) [
-        'modulo'=>'Sucursales', 'modelo'=>'App\Models\Sucursal', 'ruta'=>'Detalles Sucursal', 'permisos'=>'sucursal.show,sucursal.edit', 'request'=>$sucursal,
+        'modulo'=>'Roles', 'modelo'=>'Spatie\Permission\Models\Role', 'ruta'=>'Detalles Rol', 'permisos'=>'rol.show,rol.edit', 'request'=>$rol,
         'campos'  => [
-                        ['suc', 'Sucursal'],
-                        ['direc', 'Dirección'],
-                        ['s', 'Serie']
+                        ['nom', 'Rol'],
+                        ['desc', 'Descripción']
                       ]];
       // Dispara el evento registrado en App\Providers\EventServiceProvider.php
       ActividadesRegistradas::dispatch($info); 
-      $sucursal->updated_at_reg  = auth()->user()->email_registro;
+      $rol->updated_at_reg  = auth()->user()->email_registro;
     }
-    $sucursal->save();
-    $this->eliminarCache($id_sucursal);
+    $rol->save();
+    $rol->permissions()->sync($request->permis);
 
-    return $sucursal;
-    */
+    return $rol;
   }
   public function destroy($id_rol) {
-      /*
-    $sucursal = $this->getFindOrFail($id_sucursal, ['usuarios:id,name,apell,email_registro']);
+    $rol = $this->getFindOrFail($id_rol, ['users:id,name,apell,email_registro']);
 
-    $suc_usu = count($sucursal->usuarios);
-    if($suc_usu > 0) {
-      return abort(403, '¡Esta sucursal esta vinculado a '.$suc_usu.' usuarios por lo cual no se puede eliminar!');
+    $rol_usu = count($rol->users);
+    if($rol_usu > 0) {
+      return abort(403, '¡Este rol esta vinculado a '.$rol_usu.' usuarios por lo cual no se puede eliminar!');
     }
 
-    $sucursal->delete();
+    $rol->delete();
 
-    $this->eliminarCache($id_sucursal);
-
-    $info = (object) ['modulo'=>'Sucursales', 'modelo'=>'App\Models\Sucursal', 'ruta'=>'Detalles Sucursal', 'permisos'=>'sucursal.show,sucursal.edit','id'=>$sucursal->id,'campo'=>'Registro BD', 'valores'=>['Registro en existencia', 'Registro enviado a la papelera de reciclaje']];
+    $info = (object) ['modulo'=>'Roles', 'modelo'=>'Spatie\Permission\Models\Role', 'ruta'=>'Detalles Rol', 'permisos'=>'rol.show,rol.edit','id'=>$rol->id,'campo'=>'Registro BD', 'valores'=>['Registro en existencia', 'Registro enviado a la papelera de reciclaje']];
     // Dispara el evento registrado en App\Providers\EventServiceProvider.php
     ActividadRegistrada::dispatch($info);
     
     $info = (object) [
-      'modulo'    => 'Sucursales', // Nombre del módulo del sistema
-      'modelo'    => 'App\Models\Sucursal',
-      'registro'  => $sucursal->suc, // Información a mostrar en la papelera
-      'tabla'     => 'sucursales', // Nombre de la tabla en la BD
-      'id_reg'    => $sucursal->id, // ID de registro eliminado
+      'modulo'    => 'Roles', // Nombre del módulo del sistema
+      'modelo'    => 'Spatie\Permission\Models\Role',
+      'registro'  => $rol->nom, // Información a mostrar en la papelera
+      'tabla'     => 'roles', // Nombre de la tabla en la BD
+      'id_reg'    => $rol->id, // ID de registro eliminado
       'id_fk'     => null, // ID de la llave foranea con la que tiene relación 
      ];
     $this->papeleraRepo->store($info);
 
-    return $sucursal;
-    */
+    return $rol;
   }
   public function getFindOrFail($id_rol, $relaciones) {
-    return Role::with($relaciones)->findOrFail($id_rol);
+    return Role::with($relaciones)
+        ->select(['id', 'nom', 'name', 'desc', 'created_at_reg', 'updated_at_reg', 'created_at', 'updated_at'])
+        ->where('name', '!=', config('app.rol_desarrollador'))
+        ->where('name', '!=', config('app.rol_sin_acceso_al_sistema'))
+        ->where('name', '!=', config('app.rol_cliente'))
+        ->findOrFail($id_rol);
   }
 }

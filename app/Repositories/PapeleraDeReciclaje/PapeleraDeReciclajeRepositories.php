@@ -10,15 +10,83 @@ use DB;
 class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
   protected $sucursalRepo;
   public function __construct(SucursalPapeleraRepositories $sucursalRepositories) {
-    $this->sucursalRepo                   = $sucursalRepositories;
+    $this->sucursalRepo = $sucursalRepositories;
   }
-  public function papeleraAsignadoFindOrFailById($id_registro) {
-    $id_registro = $this->serviceCrypt->decrypt($id_registro);
-    $registro = PapeleraDeReciclaje::asignado(auth()->user()->registros_tab_acces, auth()->user()->email_registro)->findOrFail($id_registro);
+  public function getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $startDate, $endDate) {
+    $db = DB::table('papelera_de_reciclaje as papelera')
+    ->whereBetween('papelera.created_at', [$startDate, $endDate])
+    ->join('users', 'users.id', '=', 'papelera.user_id')
+    ->select('papelera.*', 'users.name', 'users.email_registro');
+
+    if(isset($columnFilter['id'])) {
+      $db->where('papelera.id', 'like', '%'.$columnFilter['id'].'%');
+    }
+    if(isset($columnFilter['mod'])) {
+      $db->where('papelera.mod', 'like', '%'.$columnFilter['mod'].'%');
+    }
+    if(isset($columnFilter['papelera_id'])) {
+      $db->where('papelera.papelera_id', 'like', '%'.$columnFilter['papelera_id'].'%');
+      $db->orWhere('papelera.reg', 'like', '%'.$columnFilter['papelera_id'].'%');
+    }
+    if(isset($columnFilter['id_fk'])) {
+      $db->where('papelera.id_fk', 'like', '%'.$columnFilter['id_fk'].'%');
+    }
+    if(isset($columnFilter['email_registro'])) {
+      $db->where('users.email_registro', 'like', '%'.$columnFilter['email_registro'].'%');
+      $db->orWhere('users.name', 'like', '%'.$columnFilter['email_registro'].'%');
+    }
+    if(isset($columnFilter['created_at'])) {
+      $db->where('papelera.created_at', 'like', '%'.$columnFilter['created_at'].'%');
+    }
+
+    if(strlen($tableFilter) > 0 ) {
+      $db->where(function ($query) use ($tableFilter) {
+        $query->where('papelera.id', 'like', '%'.$tableFilter.'%')
+            ->orWhere('papelera.mod', 'like', '%'.$tableFilter.'%')
+            ->orWhere('papelera.papelera_id', 'like', '%'.$tableFilter.'%')
+            ->orWhere('papelera.reg', 'like', '%'.$tableFilter.'%')
+            ->orWhere('papelera.id_fk', 'like', '%'.$tableFilter.'%')
+            ->orWhere('users.email_registro', 'like', '%'.$tableFilter.'%')
+            ->orWhere('users.name', 'like', '%'.$tableFilter.'%')
+            ->orWhere('papelera.created_at', 'like', '%'.$tableFilter.'%');
+      });
+    }
+
+    if(!empty($sorter) ) {
+      if($sorter['asc'] === false){
+        $sortCase = 'desc';
+      }else{
+        $sortCase = 'asc';
+      }
+      switch($sorter['column']) {
+        case 'id':
+          $db->orderBy('papelera.id', $sortCase);
+        break;
+        case 'mod':
+          $db->orderBy('papelera.mod', $sortCase);
+        break;
+        case 'papelera_id':
+          $db->orderBy('papelera.reg', $sortCase);
+        break;
+        case 'id_fk':
+          $db->orderBy('papelera.id_fk', $sortCase);
+        break;
+        case 'email_registro':
+          $db->orderBy('users.name', $sortCase);
+        break;
+        case 'created_at':
+          $db->orderBy('papelera.created_at', $sortCase);
+        break;
+        default:
+          $db->orderBy('papelera.id', 'desc');
+          break;
+      }
+    }
+    return $db->paginate($itemsLimit);
+  }
+  public function getFindOrFail($id_registro) {
+    $registro = PapeleraDeReciclaje::findOrFail($id_registro);
     return $registro;
-  }
-  public function getPagination($request) {
-    return PapeleraDeReciclaje::asignado(auth()->user()->registros_tab_acces, auth()->user()->email_registro)->buscar($request->opcion_buscador, $request->buscador)->orderBy('id', 'DESC')->paginate($request->paginador);
   }
   public function store($info) {
     $papelera = new PapeleraDeReciclaje();
@@ -32,29 +100,25 @@ class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
     $papelera->save();
     return $papelera;
   }
-  public function destroy($id_registro) {
-    try { DB::beginTransaction();
-      $registro   = $this->papeleraAsignadoFindOrFailById($id_registro);
-      $resultado  = $this->tablas($registro, 'destroy');
-      $resultado['consulta']->forceDelete();
-      $this->destroyAllPapeleraByIdFk($registro->id, $resultado['consulta']->id);
-      DB::commit();
-      return $registro;
-    } catch(\Exception $e) { DB::rollback(); throw $e; }
-  }
   public function restore($id_registro) {
-    try { DB::beginTransaction();
-      $registro = $this->papeleraAsignadoFindOrFailById($id_registro);
-      $resultado = $this->tablas($registro, 'restore');
-      if($resultado['existe_llave_primaria'] == false) { DB::commit();return false; }
-      $resultado['consulta']->restore();
-      $this->destroyAllPapeleraByIdFk($registro->id, $resultado['consulta']->id);
-      DB::commit();
-      return $registro;
-    } catch(\Exception $e) { DB::rollback(); throw $e; }
+    $registro   = $this->getFindOrFail($id_registro);
+    $resultado  = $this->tablas($registro, 'restore');
+    if($resultado->existe_llave_primaria == false) { return abort(403, '¡No puedes restaurar este registro!'); }
+    $resultado->consulta->restore();
+    $this->destroyAllPapeleraByIdFk($registro->id, $resultado->consulta->id);
+
+    return $registro;
   }
-  public function destroyAllPapeleraByIdFk($id_registro, $id_resultado) {
-    $registros =  PapeleraDeReciclaje::where('id_fk', $id_resultado)->get();
+  public function destroy($id_registro) {
+    $registro   = $this->getFindOrFail($id_registro);
+    $resultado  = $this->tablas($registro, 'destroy');
+    $resultado->consulta->forceDelete();
+    $this->destroyAllPapeleraByIdFk($registro->id, $resultado->consulta->id);
+
+    return $registro;
+  }
+  public function destroyAllPapeleraByIdFk($id_registro, $id_consulta) {
+    $registros =  PapeleraDeReciclaje::where('id_fk', $id_consulta)->get();
     if($registros->isEmpty() == false) { // Verifica si la colección esta vacia
       $hastaC = count($registros) - 1;
       for($contador2 = 0; $contador2 <= $hastaC; $contador2++) { 
@@ -67,44 +131,29 @@ class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
     PapeleraDeReciclaje::destroy($registros_id); 
   }
   public function tablas($registro, $metodo) {
-    $existe_llave_primaria = 'indefinido';
-    if($registro->tab == 'users') {
-      $consulta = \App\User::withTrashed()->findOrFail($registro->id_reg);
-      $this->usuariosRepo->metodo($metodo, $consulta);
+    $exi_llav_prim = 'indefinido';
 
-      if($consulta->acceso == '2') { // 2 = Cliente, 1 = Usuario
-        //ELIMINA LAS COTIZACIONES CON TODA SU INFORMACIÓN
-        $cotizaciones = \App\Models\Cotizacion::with(['armados'])->withTrashed()->where('user_id', $consulta->id)->get();
-        foreach($cotizaciones as $cotizacion) {
-          $this->cotizacionesRepo->metodo($metodo, $cotizacion);
-        }
-
-        // ELIMINA LOS PEDIDOS CON TODA SU INFORMACIÓN
-        $pedidos = \App\Models\Pedido::with(['armados', 'pagos'])->withTrashed()->where('user_id', $consulta->id)->get();
-        foreach($pedidos as $pedido) {
-          $this->pedidosRepo->metodo($metodo, $pedido);
-        }
-      }
-
-      $qys = \App\Models\QuejaYSugerencia::with(['archivos'=> function ($query) {
-        $query->withTrashed();
-      }])->withTrashed()->where('user_id', $consulta->id)->get();
-      $this->quejasYSugerenciasRepo->metodo($metodo, $qys);
-    }
-    if($registro->tab == 'roles') {
-      $consulta = \Spatie\Permission\Models\Role::withTrashed()->findOrFail($registro->id_reg);
+    switch($registro->tab) {
+      case 'users':
+        $consulta = \App\Models\User::withTrashed()->findOrFail($registro->papelera_id);
+        break;
+      case 'sucursales':
+        $consulta = \App\Models\Sucursal::withTrashed()->findOrFail($registro->papelera_id);
+        $this->sucursalRepo->metodo($metodo, $consulta);
+        break;
+      case 'roles':
+        $consulta = \Spatie\Permission\Models\Role::withTrashed()->findOrFail($registro->papelera_id);
+        break;
+      case 'catalogos':
+        $consulta = \App\Models\Catalogo::withTrashed()->findOrFail($registro->papelera_id);
+        break;
+      default:
+        return abort(403, 'Registro no encontrado.'); // ABORTA LA OPERACIÓN EN CASO DE QUE LA CONSULTA SEA NULL
     }
 
-    if($registro->tab == 'catalogos') {
-      $consulta = \App\Models\Catalogo::withTrashed()->findOrFail($registro->id_reg);
-    }
-
-  
-
-    if($consulta == null) {return abort(403, 'Registro no encontrado.');} // ABORTA LA OPERACIÓN EN CASO DE QUE LA CONSULTA SEA NULL
-    return [
+    return (Object) [
       'consulta'              => $consulta,
-      'existe_llave_primaria' => $existe_llave_primaria
+      'existe_llave_primaria' => $exi_llav_prim
     ];
   }
 }

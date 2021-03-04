@@ -45,13 +45,13 @@ class SucursalRepositories implements SucursalInterface {
       });
     }
 
-    if(!empty($sorter)){
+    if(!empty($sorter)) {
       if($sorter['asc'] === false){
         $sortCase = 'desc';
       }else{
         $sortCase = 'asc';
       }
-      switch($sorter['column']){
+      switch($sorter['column']) {
         case 'id':
           $db->orderBy('id', $sortCase);
         break;

@@ -58,28 +58,38 @@ class BREADSeeder extends Seeder
         ]);
         $role = Role::where('name', '=', 'guest')->first();
         Permission::create([
+          'mod'             => 'Plant',
           'nom'             => 'browse bread '   . $formId,
           'name'            => 'browse bread '   . $formId,
+          'desc'            => 'Plant',
           'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
         ]); 
         Permission::create([
+          'mod'             => 'Plant',
           'nom'             => 'read bread '     . $formId,
           'name'            => 'read bread '     . $formId,
+          'desc'            => 'Plant',
           'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
           ]); 
         Permission::create([
+          'mod'             => 'Plant',
           'nom'             => 'edit bread '     . $formId,
           'name'            => 'edit bread '     . $formId,
+          'desc'            => 'Plant',
           'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
         ]); 
         Permission::create([
+          'mod'             => 'Plant',
           'nom'             => 'add bread '      . $formId,
           'name'            => 'add bread '      . $formId,
+          'desc'            => 'Plant',
           'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
         ]); 
         Permission::create([
+          'mod'             => 'Plant',
           'nom'             => 'delete bread '   . $formId,
           'name'            => 'delete bread '   . $formId,
+          'desc'            => 'Plant',
           'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
         ]); 
         $role->givePermissionTo('browse bread '     . $formId);

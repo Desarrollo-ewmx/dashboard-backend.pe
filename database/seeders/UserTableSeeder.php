@@ -48,6 +48,6 @@ class UserTableSeeder extends Seeder
         'asig_reg'          => 'desarrolloweb.ewmx@gmail.com',
         'created_at_reg'    => 'desarrolloweb.ewmx@gmail.com'
       ]);
-      $user->assignRole(['admin', 'pruebas']);
+      $user->assignRole(['admin','user','desarrollador']);
     }
 }

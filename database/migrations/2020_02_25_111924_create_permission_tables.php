@@ -18,9 +18,10 @@ class CreatePermissionTables extends Migration
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
           $table->bigIncrements('id');
-          $table->string('nom')->unique()->comment('Nombre del permiso');
+          $table->string('mod')->comment('Modulo al que pertenece');
+          $table->string('nom')->comment('Nombre del permiso');
           $table->string('name')->unique();
-          $table->text('desc')->nullable()->comment('Descripción del permiso');
+          $table->text('desc')->comment('Descripción del permiso');
           $table->string('guard_name');
           $table->string('created_at_reg', 75)->comment('Correo del usuario que realizo el registro');
           $table->string('updated_at_reg', 75)->nullable()->comment('Correo del usuario que realizo la última modificación');
@@ -34,7 +35,6 @@ class CreatePermissionTables extends Migration
           $table->string('name')->unique();
           $table->text('desc')->nullable()->comment('Descripción del rol');
           $table->string('guard_name');
-          $table->string('asig_reg', 75)->comment('Correo del usuario al qu se le asigno este registro');
           $table->string('created_at_reg', 75)->comment('Correo del usuario que realizo el registro');
           $table->string('updated_at_reg', 75)->nullable()->comment('Correo del usuario que realizo la última modificación');
           $table->timestamps();

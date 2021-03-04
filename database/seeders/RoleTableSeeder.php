@@ -9,28 +9,24 @@ class RoleTableSeeder extends Seeder {
       'nom'				      => 'Pruebas',
       'name'            => 'pruebas',
       'desc'            => "Rol para realizar pruebas",
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
     ]);
     Role::create([
       'nom'				      => 'Cliente',
       'name'            => 'cliente',
       'desc'            => "Acceso especial como cliente",
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'  => 'desarrolloweb.ewmx@gmail.com',
     ]);
     Role::create([
       'nom'				      => 'Desarrollador',
       'name'				    => 'desarrollador',
       'desc'            => 'Administrador de todo el sistema',
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
     Role::create([
       'nom'				      => 'Sin acceso al sistema',
       'name'				    => 'sinAccesoAlSistema',
       'desc'            => 'No tiene permiso de acceder al sistema',
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
 
@@ -39,21 +35,18 @@ class RoleTableSeeder extends Seeder {
       'nom'				      => 'Administrador',
       'name'            => 'admin',
       'desc'            => '',
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
     $userRole = Role::create([
       'nom'				      => 'Usuario',
       'name'            => 'user',
       'desc'            => '',
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
     $guestRole = Role::create([
       'nom'				      => 'Guest',
       'name'            => 'guest',
       'desc'            => '',
-      'asig_reg'        => 'desarrolloweb.ewmx@gmail.com',
       'created_at_reg'	=> 'desarrolloweb.ewmx@gmail.com',
     ]);
   }
