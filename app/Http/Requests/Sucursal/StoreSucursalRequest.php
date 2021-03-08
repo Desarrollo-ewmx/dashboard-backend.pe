@@ -12,14 +12,16 @@ class StoreSucursalRequest extends FormRequest {
       'ser_cotiz' => 'required|max:150|exists:catalogos,value',
       'direc'     => 'required|max:200|string',
       "etiquetas"     => "array",
-      'etiquetas.tip' => 'required|max:2',
+      'etiquetas.*.tip' => 'required|max:2',
     ];
   }
   public function attributes() {
     return [
       'suc'       => 'sucursal',
       'ser_cotiz' => 'serie',
-      'direc'     => 'dirección'
+      'direc'     => 'dirección',
+      'etiquetas.*.tip' => 'etiquetas (tipo)'
+
     ];
   }
 }
