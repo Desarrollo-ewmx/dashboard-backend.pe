@@ -25,15 +25,19 @@ class PapeleraDeReciclajeRepositories implements PapeleraDeReciclajeInterface {
       $db->where('papelera.mod', 'like', '%'.$columnFilter['mod'].'%');
     }
     if(isset($columnFilter['papelera_id'])) {
-      $db->where('papelera.papelera_id', 'like', '%'.$columnFilter['papelera_id'].'%');
-      $db->orWhere('papelera.reg', 'like', '%'.$columnFilter['papelera_id'].'%');
+      $db->where(function ($query) use ($columnFilter) {
+        $query->where('papelera.papelera_id', 'like', '%'.$columnFilter['papelera_id'].'%')
+        ->orWhere('papelera.reg', 'like', '%'.$columnFilter['papelera_id'].'%');
+      });
     }
     if(isset($columnFilter['id_fk'])) {
       $db->where('papelera.id_fk', 'like', '%'.$columnFilter['id_fk'].'%');
     }
     if(isset($columnFilter['email_registro'])) {
-      $db->where('users.email_registro', 'like', '%'.$columnFilter['email_registro'].'%');
-      $db->orWhere('users.name', 'like', '%'.$columnFilter['email_registro'].'%');
+      $db->where(function ($query) use ($columnFilter){
+        $query->where('users.email_registro', 'like', '%'.$columnFilter['email_registro'].'%')
+        ->orWhere('users.name', 'like', '%'.$columnFilter['email_registro'].'%');
+      });
     }
     if(isset($columnFilter['created_at'])) {
       $db->where('papelera.created_at', 'like', '%'.$columnFilter['created_at'].'%');

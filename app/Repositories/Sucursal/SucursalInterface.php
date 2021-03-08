@@ -9,8 +9,4 @@ interface SucursalInterface {
   public function update($request, $id_sucursal);
   
   public function getFindOrFail($id_sucursal, $relaciones);
-  
-  public function getFindOrFailCache($request);
-
-  public function eliminarCache($id_sucursal);
 }

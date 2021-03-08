@@ -26,4 +26,7 @@ class Sucursal extends Model {
   public function actividades() {
     return $this->morphMany('App\Models\Actividad', 'actividad');
   }
+  public function quejasYSugerencias() {
+    return $this->belongsToMany('App\Models\QuejaYSugerencia', 'queja_y_sugerencia_sucursal');
+  }
 }

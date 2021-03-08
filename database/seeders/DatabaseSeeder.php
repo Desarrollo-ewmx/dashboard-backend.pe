@@ -43,7 +43,6 @@ class DatabaseSeeder extends Seeder
           
           /* ========================================== */
           UsersAndNotesSeeder::class,
-          MenusTableSeeder::class,
           FolderTableSeeder::class,
           ExampleSeeder::class,
           BREADSeeder::class,

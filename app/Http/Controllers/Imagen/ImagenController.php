@@ -9,17 +9,17 @@ use App\Events\layouts\ArchivoCargado;
 use App\Events\layouts\ArchivosEliminados;
 use App\Events\layouts\ActividadRegistrada;
 // Repositories
-use App\Repositories\Sucursal\SucursalRepositories;
+use App\Repositories\Sucursal\SucursalCacheRepositories;
 
 class ImagenController extends Controller {
-  protected $sucursalRepo;
-  public function __construct(SucursalRepositories $sucursalRepositories) {
-    $this->sucursalRepo = $sucursalRepositories;
+  protected $sucursalCacheRepo;
+  public function __construct(SucursalCacheRepositories $sucursalCacheRepositories) {
+    $this->sucursalCacheRepo = $sucursalCacheRepositories;
   }
   public function destroy($opcion, $id) {
     switch($opcion) {
       case 'sucursales':
-        $model        = $this->sucursalRepo->getFindOrFailCache($id);
+        $model        = $this->sucursalCacheRepo->getFindOrFailCache($id);
         $ruta_nombre  = [$model->log_nom];
 
         $modul  = 'Sucursales';
@@ -54,7 +54,7 @@ class ImagenController extends Controller {
 		if($request->hasfile('file')) {
 			switch($opcion) {
 				case 'sucursales':
-					$model	= $this->sucursalRepo->getFindOrFailCache($id);
+					$model	= $this->sucursalCacheRepo->getFindOrFailCache($id);
 					$info		= (object) ['blob_archivo'=>$request->file('file'), 'ruta'=>'sucursal/'.$model->id, 'nombre'=>'sucursal-'.time(), 'rut_arch_ant'=>[$model->log_nom]];
 					break;
 			}

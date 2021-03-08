@@ -10,15 +10,15 @@ use App\Models\User;
 use App\Events\layouts\RegistroUltimoAccesoAlSistema;
 // Repositories
 use App\Repositories\Sistema\SistemaRepositories;
-use App\Repositories\Sucursal\SucursalRepositories;
+use App\Repositories\Sucursal\SucursalCacheRepositories;
 
 class AuthController extends Controller { 
   protected $sistemaRepo;
-  protected $sucursalRepo;
-  public function __construct(SistemaRepositories $sistemaRepositories, SucursalRepositories $sucursalRepositories) {
+  protected $sucursalCacheRepo;
+  public function __construct(SistemaRepositories $sistemaRepositories, SucursalCacheRepositories $sucursalCacheRepositories) {
     $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    $this->sistemaRepo  = $sistemaRepositories;
-    $this->sucursalRepo = $sucursalRepositories;
+    $this->sistemaRepo        = $sistemaRepositories;
+    $this->sucursalCacheRepo  = $sucursalCacheRepositories;
   }
   public function login(Request $request) {
     $credentials = request(['email', 'password']);
@@ -55,7 +55,7 @@ class AuthController extends Controller {
   }
   protected function data($usuario) {
     $sistema  = $this->sistemaRepo->sistemaFindOrFail();
-    $sucursal = $this->sucursalRepo->getFindOrFailCache($usuario->id_suc_act);
+    $sucursal = $this->sucursalCacheRepo->getFindOrFailCache($usuario->id_suc_act);
     return [
       'desarrollador' => ['developer'=>config('app.developer'), 'developer_url'=>config('app.developer_url'), 'version_del_sistema'=>config('app.version_del_sistema')],
       'sistema'       => $sistema,

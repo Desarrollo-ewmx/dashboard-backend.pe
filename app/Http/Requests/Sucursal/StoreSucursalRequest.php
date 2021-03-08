@@ -9,15 +9,17 @@ class StoreSucursalRequest extends FormRequest {
   public function rules() {
     return [
       'suc'       => 'required|max:50|unique:sucursales,suc',
-      'direc'     => 'required|max:200|string',
       'ser_cotiz' => 'required|max:150|exists:catalogos,value',
+      'direc'     => 'required|max:200|string',
+      "etiquetas"     => "array",
+      'etiquetas.tip' => 'required|max:2',
     ];
   }
   public function attributes() {
     return [
       'suc'       => 'sucursal',
-      'direc'     => 'dirección',
-      'ser_cotiz' => 'serie'
+      'ser_cotiz' => 'serie',
+      'direc'     => 'dirección'
     ];
   }
 }

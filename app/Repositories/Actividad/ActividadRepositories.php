@@ -21,8 +21,10 @@ class ActividadRepositories implements ActividadInterface {
       $db->where('actividades.id', 'like', '%'.$columnFilter['id'].'%');
     }
     if(isset($columnFilter['email_registro'])) {
-      $db->where('users.email_registro', 'like', '%'.$columnFilter['email_registro'].'%');
-      $db->orWhere('users.name', 'like', '%'.$columnFilter['email_registro'].'%');
+      $db->where(function ($query) use ($columnFilter) {
+        $query->where('users.email_registro', 'like', '%'.$columnFilter['email_registro'].'%')
+        ->orWhere('users.name', 'like', '%'.$columnFilter['email_registro'].'%');
+      });
     }
     if(isset($columnFilter['mod'])) {
       $db->where('actividades.mod', 'like', '%'.$columnFilter['mod'].'%');

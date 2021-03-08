@@ -7,14 +7,17 @@ use App\Events\layouts\ActividadesRegistradas;
 use App\Events\layouts\ActividadRegistrada;
 // Repositories
 use App\Repositories\PapeleraDeReciclaje\PapeleraDeReciclajeRepositories;
+use App\Repositories\Sucursal\SucursalCacheRepositories;
 // Otros
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class SucursalRepositories implements SucursalInterface {
   protected $papeleraRepo;
-  public function __construct(PapeleraDeReciclajeRepositories $papeleraDeReciclajeRepositories) {
-    $this->papeleraRepo = $papeleraDeReciclajeRepositories;
+  protected $sucursalCacheRepo;
+  public function __construct(PapeleraDeReciclajeRepositories $papeleraDeReciclajeRepositories, SucursalCacheRepositories $sucursalCacheRepositories) {
+    $this->papeleraRepo       = $papeleraDeReciclajeRepositories;
+    $this->sucursalCacheRepo  = $sucursalCacheRepositories;
   } 
   public function getPagination($sorter, $tableFilter, $columnFilter, $itemsLimit, $startDate, $endDate) {
     $db = DB::table('sucursales')
@@ -83,7 +86,7 @@ class SucursalRepositories implements SucursalInterface {
     return $sucursal;
   }
   public function update($request, $id_sucursal) {
-    $sucursal           = $this->getFindOrFailCache($id_sucursal);
+    $sucursal           = $this->sucursalCacheRepo->getFindOrFailCache($id_sucursal);
     $sucursal->suc      = $request->suc;
     $sucursal->direc    = $request->direc;
     $sucursal->ser_cot  = $request->ser_cotiz;
@@ -101,7 +104,7 @@ class SucursalRepositories implements SucursalInterface {
       $sucursal->updated_at_reg  = auth()->user()->email_registro;
     }
     $sucursal->save();
-    $this->eliminarCache($id_sucursal);
+    $this->sucursalCacheRepo->eliminarCache($id_sucursal);
 
     return $sucursal;
   }
@@ -115,7 +118,7 @@ class SucursalRepositories implements SucursalInterface {
 
     $sucursal->delete();
 
-    $this->eliminarCache($id_sucursal);
+    $this->sucursalCacheRepo->eliminarCache($id_sucursal);
 
     $info = (object) ['modulo'=>'Sucursales', 'modelo'=>'App\Models\Sucursal', 'ruta'=>'Detalles Sucursal', 'permisos'=>'sucursal.show,sucursal.edit','id'=>$sucursal->id,'campo'=>'Registro BD', 'valores'=>['Registro en existencia', 'Registro enviado a la papelera de reciclaje']];
     // Dispara el evento registrado en App\Providers\EventServiceProvider.php
@@ -135,14 +138,5 @@ class SucursalRepositories implements SucursalInterface {
   }
   public function getFindOrFail($id_sucursal, $relaciones) {
     return Sucursal::with($relaciones)->findOrFail($id_sucursal);
-  }
-  public function getFindOrFailCache($id_sucursal) {
-    $sucursal = Cache::rememberForever('sucursal-'.$id_sucursal, function() use($id_sucursal){
-      return Sucursal::with(['etiquetas'])->findOrFail($id_sucursal);
-    });
-    return $sucursal;
-  }
-  public function eliminarCache($id_sucursal) {
-    Cache::pull('sucursal-'.$id_sucursal);
-  }
+  } 
 }

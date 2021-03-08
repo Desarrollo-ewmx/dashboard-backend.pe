@@ -3,12 +3,12 @@ namespace App\Repositories\Perfil;
 //Models
 use App\Models\User;
 // Repositories
-use App\Repositories\Sucursal\SucursalRepositories;
+use App\Repositories\Sucursal\SucursalCacheRepositories;
 
 class PerfilRepositories implements PerfilInterface {
-  protected $sucursalRepo;
-  public function __construct(SucursalRepositories $sucursalRepositories) {
-    $this->sucursalRepo    = $sucursalRepositories;
+  protected $sucursalCacheRepo;
+  public function __construct(SucursalCacheRepositories $sucursalCacheRepositories) {
+    $this->sucursalCacheRepo    = $sucursalCacheRepositories;
   }
   public function getAutenticado() {
 		return auth()->user();
@@ -19,7 +19,7 @@ class PerfilRepositories implements PerfilInterface {
     switch($request->campo) {
       case 'sucActiva':
         $usuario->id_suc_act = $request->valor;
-        $sucursal = $this->sucursalRepo->getFindOrFailCache($usuario->id_suc_act);
+        $sucursal = $this->sucursalCacheRepo->getFindOrFailCache($usuario->id_suc_act);
         break;
       case 'lang':
         $usuario->lang = $request->valor;

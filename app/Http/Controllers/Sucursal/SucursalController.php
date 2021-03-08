@@ -7,11 +7,14 @@ use App\Http\Requests\Sucursal\StoreSucursalRequest;
 use App\Http\Requests\Sucursal\UpdateSucursalRequest;
 // Repositories
 use App\Repositories\Sucursal\SucursalRepositories;
+use App\Repositories\Sucursal\SucursalCacheRepositories;
 
 class SucursalController extends Controller {
   protected $sucursalRepo;
-  public function __construct(SucursalRepositories $sucursalRepositories) {
-    $this->sucursalRepo = $sucursalRepositories;
+  protected $sucursalCacheRepo;
+  public function __construct(SucursalRepositories $sucursalRepositories, SucursalCacheRepositories $sucursalCacheRepositories) {
+    $this->sucursalRepo       = $sucursalRepositories;
+    $this->sucursalCacheRepo  = $sucursalCacheRepositories;
   }
   public function index(Request $request) {
     $sorter       = $request->sorter;
@@ -29,7 +32,7 @@ class SucursalController extends Controller {
     return response()->json(['id'=>$sucursal->id],200);
   }
   public function get($id_sucursal) {
-    $sucursal = $this->sucursalRepo->getFindOrFailCache($id_sucursal);
+    $sucursal = $this->sucursalCacheRepo->getFindOrFailCache($id_sucursal);
     return response()->json($sucursal,200);
   }
   public function update(UpdateSucursalRequest $request, $id_sucursal) {
