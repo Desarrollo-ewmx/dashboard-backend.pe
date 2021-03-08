@@ -3,7 +3,7 @@ namespace App\Repositories\PapeleraDeReciclaje;
 // Models
 use App\Models\PapeleraDeReciclaje;
 // Repositories
-use App\Repositories\papeleraDeReciclaje\tabla\Sucursal\SucursalPapeleraRepositories;
+use App\Repositories\PapeleraDeReciclaje\Tabla\Sucursal\SucursalPapeleraRepositories;
 //Otro
 use DB;
 
